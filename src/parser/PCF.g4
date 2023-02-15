@@ -7,7 +7,7 @@ term : LIT                                   # Lit
      | '(' 'ifz' term term term ')'          # IfZ
      | VAR                                   # Var
      | '(' 'let' VAR term term ')'           # Let
-     | term term                             # App
+     | '(' term term ')'                     # App
      | '(' 'fun' VAR term ')'                # Fun
      | '(' 'fix' VAR term ')'                # Fix
      ;

@@ -3,8 +3,9 @@ package pcf
 import java.io.{FileInputStream, InputStream}
 import ast.Term
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
-import parser.{ReportingPCFLexer, PCFParser, ErrorListener, Error, SyntaxError, ASTVisitor}
+import parser.{ASTVisitor, Error, ErrorListener, PCFParser, ReportingPCFLexer, SyntaxError}
 import interp.Interp.interp
+import _root_.interp.Value
 
 object Interp :
   def main(args: Array[String]): Unit =
@@ -12,7 +13,7 @@ object Interp :
     val verbose = args.length == 0 || args.length > 0 && args(1) == "-v"
     println(s"==> ${interpret(is, verbose)}")
 
-  def interpret(is: InputStream, verbose: Boolean): Int =
+  def interpret(is: InputStream, verbose: Boolean): Value =
     val input = new ANTLRInputStream(is)
     // val lexer = new CalcLexer(input)
     val lexer = new ReportingPCFLexer(input)

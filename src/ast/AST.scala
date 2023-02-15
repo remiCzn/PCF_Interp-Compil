@@ -3,9 +3,11 @@ package ast
 trait AST
 
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
+import interp.Interp.Env
+import interp.Value
 
 enum Term extends AST :
-  case Lit(n: Int)
+  case Lit(n: Value)
   case BOp(op: Op, t1: Term, t2: Term)
   case IfZ(t1: Term, t2: Term, t3: Term)
   case Var(x: String)

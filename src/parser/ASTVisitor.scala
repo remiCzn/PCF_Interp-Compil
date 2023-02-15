@@ -1,14 +1,16 @@
 package parser
 import scala.jdk.CollectionConverters.*
 import ast.{AST, Op, Term}
-import Term.{Let, Lit, BOp, IfZ, Var, Fun, Fix, App}
+import Term.{App, BOp, Fix, Fun, IfZ, Let, Lit, Var}
+import interp.BoxInt
 import parser.PCFParser
+import interp.Value.*
 
 import java.util
 
 class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
   override def visitLit(ctx: PCFParser.LitContext): AST =
-    Lit(ctx.getText.toInt).asInstanceOf[AST]
+    Lit(BoxInt(ctx.getText.toInt)).asInstanceOf[AST]
 
   override def visitBOp(ctx: PCFParser.BOpContext): AST =
     val op = Op.parse(ctx.OP.getText)

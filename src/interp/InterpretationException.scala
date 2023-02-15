@@ -1,4 +1,4 @@
 package interp
 
-class InterpretationException extends Exception("Not defined variable") {}
+class InterpretationException(val x: String) extends Exception(s"Not defined variable: ${x}") {}
 class WrongConversionException extends Exception("Can't convert this")
