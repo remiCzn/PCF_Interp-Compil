@@ -6,14 +6,16 @@ import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 import parser.{ASTVisitor, Error, ErrorListener, PCFParser, ReportingPCFLexer, SyntaxError}
 import interp.Interp.interp
 import _root_.interp.Value
+import typer.*
 
 object Interp :
   def main(args: Array[String]): Unit =
     val is = if (args.length == 0) System.in else new FileInputStream(args(0))
     val verbose = args.length == 0 || args.length > 0 && args(1) == "-v"
-    println(s"==> ${interpret(is, verbose)}")
+    val (value, typ) = interpret(is, verbose);
+    println(s"==> ${value} : ${typ}")
 
-  def interpret(is: InputStream, verbose: Boolean): Value =
+  def interpret(is: InputStream, verbose: Boolean): (Value, Type) =
     val input = new ANTLRInputStream(is)
     // val lexer = new CalcLexer(input)
     val lexer = new ReportingPCFLexer(input)
@@ -27,8 +29,10 @@ object Interp :
       val visitor = new ASTVisitor
       val term = visitor.visit(tree).asInstanceOf[Term]
       if (verbose) println(s"AST: $term")
+      val a = typer.Typer.typer(term, Map[String, Type]())
+      if(verbose) println(s"Type: $a")
       val result = interp(term, Map())
-      result
+      (result, a)
     else throw new SyntaxError(Error.msg)
 
 
