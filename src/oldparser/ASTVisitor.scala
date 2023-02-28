@@ -1,27 +1,27 @@
-package parser
-import scala.jdk.CollectionConverters.*
+package oldparser
+
+import ast.Term.*
 import ast.{AST, Op, Term}
-import Term.{App, BOp, Fix, Fun, IfZ, Let, Lit, Var}
-import interp.{BoxInt, Interp}
-import parser.PCFParser
+import interp.BoxInt
 import interp.Value.*
+import oldparser.PCFParser
 
 import java.util
+import scala.jdk.CollectionConverters.*
 
 class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
-  override def visitLit(ctx: PCFParser.LitContext): AST =
+  override def visitLit(ctx: oldparser.PCFParser.LitContext): AST =
     Lit(BoxInt(ctx.getText.toInt)).asInstanceOf[AST]
 
-  override def visitBOp(ctx: PCFParser.BOpContext): AST =
-    var op = if(ctx.OP1() != null) ctx.OP1() else ctx.OP2();
-    var opSymbole = Op.parse(op.getText)
+  override def visitBOp(ctx: oldparser.PCFParser.BOpContext): AST =
+    val op = Op.parse(ctx.OP.getText)
     val ANTLRTerms = ctx.term.asScala.toList
     val List(term1, term2) =
       for (ANTLRTerm <- ANTLRTerms) yield
         visit(ANTLRTerm).asInstanceOf[Term]
-    BOp(opSymbole, term1, term2).asInstanceOf[AST]
+    BOp(op, term1, term2).asInstanceOf[AST]
 
-  override def visitIfZ(ctx: PCFParser.IfZContext): AST =
+  override def visitIfZ(ctx: oldparser.PCFParser.IfZContext): AST =
     val ANTLRTerms = ctx.term.asScala.toList
     val List(term1, term2, term3) =
       for(ANTLRTerm <- ANTLRTerms) yield
@@ -29,33 +29,33 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
 
     IfZ(term1, term2, term3).asInstanceOf[AST]
 
-  override def visitVar(ctx: PCFParser.VarContext): AST = {
+  override def visitVar(ctx: oldparser.PCFParser.VarContext): AST = {
     Var(ctx.getText).asInstanceOf[AST]
   }
 
-  override def visitLet(ctx: PCFParser.LetContext): AST = {
-
-    val varName = ctx.assign.VAR.getText
-    val varValue = visit(ctx.assign.term).asInstanceOf[Term];
-
-    var expr = visit(ctx.assign).asInstanceOf[Term];
-    Let(varName, varValue, expr).asInstanceOf[AST]
+  override def visitLet(ctx: oldparser.PCFParser.LetContext): AST = {
+    val varName = ctx.VAR.getText
+    val ANTLRTerms = ctx.term.asScala.toList
+    val List(term1, term2) =
+      for(ANTLRTerm <- ANTLRTerms) yield
+        visit(ANTLRTerm).asInstanceOf[Term]
+    Let(varName, term1, term2).asInstanceOf[AST]
   }
 
-  override def visitApp(ctx: PCFParser.AppContext): AST = {
+  override def visitApp(ctx: oldparser.PCFParser.AppContext): AST = {
     val List(term1, term2) =
       for(ANTLRTerm <- ctx.term.asScala.toList) yield
         visit(ANTLRTerm).asInstanceOf[Term]
     App(term1, term2).asInstanceOf[AST]
   }
 
-  override def visitFun(ctx: PCFParser.FunContext): AST = {
+  override def visitFun(ctx: oldparser.PCFParser.FunContext): AST = {
     val x = ctx.VAR.getText
     val term = visit(ctx.term).asInstanceOf[Term]
     Fun(x, term).asInstanceOf[AST]
   }
 
-  override def visitFix(ctx: PCFParser.FixContext): AST = {
+  override def visitFix(ctx: oldparser.PCFParser.FixContext): AST = {
     val x = ctx.VAR.getText
     val term = visit(ctx.term).asInstanceOf[Term]
     Fix(x, term).asInstanceOf[AST]

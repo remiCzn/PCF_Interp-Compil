@@ -1,5 +1,5 @@
 // Generated from java-escape by ANTLR 4.11.1
-package parser;
+package oldparser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -11,19 +11,12 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface PCFVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by the {@code Par}
+	 * Visit a parse tree produced by the {@code Lit}
 	 * labeled alternative in {@link PCFParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPar(PCFParser.ParContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code App}
-	 * labeled alternative in {@link PCFParser#term}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitApp(PCFParser.AppContext ctx);
+	T visitLit(PCFParser.LitContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BOp}
 	 * labeled alternative in {@link PCFParser#term}.
@@ -32,19 +25,12 @@ public interface PCFVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBOp(PCFParser.BOpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Fix}
+	 * Visit a parse tree produced by the {@code IfZ}
 	 * labeled alternative in {@link PCFParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFix(PCFParser.FixContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Lit}
-	 * labeled alternative in {@link PCFParser#term}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLit(PCFParser.LitContext ctx);
+	T visitIfZ(PCFParser.IfZContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Var}
 	 * labeled alternative in {@link PCFParser#term}.
@@ -60,12 +46,12 @@ public interface PCFVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLet(PCFParser.LetContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code IfZ}
+	 * Visit a parse tree produced by the {@code App}
 	 * labeled alternative in {@link PCFParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIfZ(PCFParser.IfZContext ctx);
+	T visitApp(PCFParser.AppContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Fun}
 	 * labeled alternative in {@link PCFParser#term}.
@@ -74,9 +60,10 @@ public interface PCFVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFun(PCFParser.FunContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PCFParser#assign}.
+	 * Visit a parse tree produced by the {@code Fix}
+	 * labeled alternative in {@link PCFParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssign(PCFParser.AssignContext ctx);
+	T visitFix(PCFParser.FixContext ctx);
 }
