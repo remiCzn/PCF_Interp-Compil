@@ -16,7 +16,9 @@ term : LIT                                          # Lit
      | '(' term ')'                                 # Par
      ;
 
-assign : VAR '=' term;
+assign : VAR '=' term
+       | assign 'and' assign
+       ;
 
 // règles lexicales
 OP1 : '*' | '/';

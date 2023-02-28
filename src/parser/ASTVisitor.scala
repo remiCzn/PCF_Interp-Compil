@@ -1,7 +1,7 @@
 package parser
 import scala.jdk.CollectionConverters.*
 import ast.{AST, Op, Term}
-import Term.{App, BOp, Fix, Fun, IfZ, Let, Lit, Var}
+import Term.{App, BOp, Fix, Fun, IfZ, Let, LetPlus, Lit, Var}
 import interp.{BoxInt, Interp}
 import parser.PCFParser
 import interp.Value.*
@@ -34,12 +34,21 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
   }
 
   override def visitLet(ctx: PCFParser.LetContext): AST = {
+    def getValues(value: PCFParser.AssignContext) : List[(String, Term)] = {
+      if(value.VAR == null) {
+        getValues(value.assign(0)) ++ getValues(value.assign(1))
+      } else {
+        val varName = value.VAR.getText
+        val varValue = visit(value.term).asInstanceOf[Term];
+        List((varName, varValue))
+      }
+    }
 
-    val varName = ctx.assign.VAR.getText
-    val varValue = visit(ctx.assign.term).asInstanceOf[Term];
+    val vars = getValues(ctx.assign)
+    println(vars)
 
-    var expr = visit(ctx.assign).asInstanceOf[Term];
-    Let(varName, varValue, expr).asInstanceOf[AST]
+    val expr = visit(ctx.term).asInstanceOf[Term];
+    LetPlus(vars, expr).asInstanceOf[AST]
   }
 
   override def visitApp(ctx: PCFParser.AppContext): AST = {
@@ -59,5 +68,9 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
     val x = ctx.VAR.getText
     val term = visit(ctx.term).asInstanceOf[Term]
     Fix(x, term).asInstanceOf[AST]
+  }
+
+  override def visitPar(ctx: PCFParser.ParContext): AST = {
+    visit(ctx.term)
   }
 

@@ -1,7 +1,7 @@
 package pcf
 
 import java.io.{FileInputStream, InputStream}
-import ast.Term
+import ast.{Term, transform}
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
 import parser.{ASTVisitor, Error, ErrorListener, PCFParser, ReportingPCFLexer, SyntaxError}
 import interp.Interp.interp
@@ -28,10 +28,11 @@ object Interp :
     if ! Error.flag then
       val visitor = new ASTVisitor
       val term = visitor.visit(tree).asInstanceOf[Term]
-      if (verbose) println(s"AST: $term")
-      val a = typer.Typer.typer(term, Map[String, Type]())
+      val transformedTerm = transform(term).asInstanceOf[Term]
+      if (verbose) println(s"AST: $transformedTerm")
+      val a = typer.Typer.typer(transformedTerm, Map[String, Type]())
       if(verbose) println(s"Type: $a")
-      val result = interp(term, Map())
+      val result = interp(transformedTerm, Map())
       (result, a)
     else throw new SyntaxError(Error.msg)
 
