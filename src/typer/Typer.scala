@@ -25,7 +25,7 @@ object Typer {
         if(!(type2 === type3)) {
           throw new TypeException(s"$t2 est du type $type2 mais $t3 est du type $type3");
         }
-        typer(t2, type_env)
+        type2
       }
 
       case Term.Var(x) => type_env.get(x) match
