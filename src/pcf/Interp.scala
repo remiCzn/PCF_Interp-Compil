@@ -1,6 +1,6 @@
 package pcf
 
-import ast.{AST, Term}
+import ast.{AST, Term, transform}
 import gen.Gen
 import interp.{IceCube, Value}
 import org.antlr.v4.runtime.{ANTLRInputStream, CommonTokenStream}
@@ -32,9 +32,10 @@ object Main :
       if ! Error.flag then
         val visitor = new ASTVisitor
         val term = visitor.visit(tree).asInstanceOf[Term]
-        if (verbose) println(s"AST: $term")
-        val typ = typer.Typer.typer(term, Map())
-        (term, typ)
+        val transformedTerm = transform(term).asInstanceOf[Term]
+        if (verbose) println(s"AST: $transformedTerm")
+        val typ = typer.Typer.typer(transformedTerm, Map())
+        (transformedTerm, typ)
       else throw new SyntaxError(Error.msg)
 
     def interpret(): String =

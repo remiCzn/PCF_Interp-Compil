@@ -1,2 +1,5 @@
 .idea/
 out/
+*.java
+*.interp
+*.tokens
