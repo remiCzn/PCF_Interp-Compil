@@ -16,7 +16,7 @@ object Gen {
   def gen(t: ATerm): String = {
     "(module\n" +
     "  (func (export \"main\") (result i32)\n" +
-    s"    ${emit(t)}\n" +
+    s"${format(2, emit(t))}" +
     "  return))\n"
   }
 
@@ -41,6 +41,8 @@ object Gen {
   private def spaces(depth: Int): String = (for i <- 0 until depth yield "  ").mkString
   private def format(d: Int, code: Code): String = code match
     case Code.Ins(s) => s"${spaces(d)}$s\n"
-    case Code.Seq()
+    case Code.Seq(l) => {
+      (for(code <- l) yield format(d,code)).mkString
+    }
     case _ => ???
 }
