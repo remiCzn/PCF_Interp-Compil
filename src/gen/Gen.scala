@@ -2,11 +2,12 @@ package gen
 
 import ast.ATerm
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
-import ast.Term.{BOp, Lit}
+import ast.Term.{BOp, IfZ, Lit}
 
 enum Code {
   case Ins(ins: String)
   case Seq(seq: List[Code])
+  case IfThenElse(isZero: Code, ThenTerm: Code, ElseTerm: Code)
   case Test(code1: Code, code2: Code)
 }
 
@@ -35,6 +36,9 @@ object Gen {
             Code.Ins(instruction)
           ))
       }
+      case IfZ(isZero, thenTerm, elseTerm) => {
+        Code.IfThenElse(emit(isZero), emit(thenTerm), emit(elseTerm))
+      }
       case _ => ???
   }
 
@@ -44,5 +48,16 @@ object Gen {
     case Code.Seq(l) => {
       (for(code <- l) yield format(d,code)).mkString
     }
+    case Code.IfThenElse(isZero, thenTherm, elseTherm) => {
+      format(d, isZero)
+      + s"${spaces(d)}(if (result i32)\n"
+      + s"${spaces(d+1)}(then\n"
+      + format(d+2, thenTherm)
+      + s"${spaces(d+1)})\n"
+      + s"${spaces(d+1)}(else\n"
+        + format(d+2, elseTherm)
+      + s"${spaces(d+1)})\n"
+      + s"${spaces(d)})\n"
+  }
     case _ => ???
 }
