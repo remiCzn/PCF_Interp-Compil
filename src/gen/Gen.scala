@@ -14,6 +14,7 @@ object Gen {
   val empty: List[Code] = Nil
 
   def gen(t: ATerm): String = {
+    println(t)
     "(module\n" +
       s"${format(1, declare.all())}" +
       "  (func (export \"main\") (result i32)\n" +
