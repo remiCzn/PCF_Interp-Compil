@@ -91,3 +91,15 @@ def Cons(head: Int, tail: Code): Code = {
     Code.Ins("(call $cons)")
   ))
 }
+
+val PushEnv: Code = Code.Ins("(global.get $ENV)")
+
+val Extend: Code = Code.Seq(List(
+  Code.Ins("(global.get $ENV)"),
+  Code.Ins("(call $cons)"),
+  Code.Ins("(global.set $ENV)")
+))
+
+val SaveAcc: Code = Code.Ins("(global.set $ACC)")
+val RetrieveAcc: Code = Code.Ins("(global.get $ACC)")
+val PopEnv: Code = Code.Ins("(global.get $ENV)")

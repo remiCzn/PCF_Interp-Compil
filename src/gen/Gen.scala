@@ -1,7 +1,7 @@
 package gen
 
 import ast.ATerm
-import ast.ATerm.{BOp, IfZ, Lit}
+import ast.ATerm.{BOp, IfZ, Lit, Let, Var}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
 
 enum Code {
@@ -38,6 +38,19 @@ object Gen {
         ))
       case IfZ(isZero, thenTerm, elseTerm) =>
         Code.Test(emit(isZero), emit(thenTerm), emit(elseTerm))
+      case Let(name, t, u) =>
+        Code.Seq(List(
+          PushEnv,
+          emit(t),
+          Extend,
+          emit(u),
+          SaveAcc,
+          PopEnv,
+          RetrieveAcc
+        ))
+      case Var(_, idx) => {
+        Search(idx, Code.Ins("(global.get $ENV)"))
+      }
       case _ => ??? //TODO
   }
 
