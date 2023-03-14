@@ -88,6 +88,6 @@ def Cons(head: Int, tail: Code): Code = {
   Code.Seq(List(
     Code.Ins(s"(i32.const $head)"),
     tail,
-    "(call $cons)"
+    Code.Ins("(call $cons)")
   ))
 }

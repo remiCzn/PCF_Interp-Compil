@@ -1,8 +1,8 @@
 package gen
 
 import ast.ATerm
+import ast.ATerm.{BOp, IfZ, Lit}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
-import ast.Term.{BOp, IfZ, Lit}
 
 enum Code {
   case Ins(ins: String)
@@ -23,7 +23,7 @@ object Gen {
 
   private def emit(t: ATerm): Code = {
     t match
-      case Lit(n) => Code.Ins(s"i32.const $n")
+      case Lit(n) => Code.Ins(s"i32.const $n") //Si n est un Int
       case BOp(op, t1, t2) =>
         val instruction = op match
           case PLUS => "i32.add"

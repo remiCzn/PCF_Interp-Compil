@@ -17,8 +17,6 @@ enum ATerm:
   case Fix(variable: String, t1: ATerm)
   case Var(s: String, index: Int)
 
-//def annotate(term: Term, e: Env) : ATerm = term
-
 def annotate(term: Term, e: Env): ATerm =
   term match
     case Term.Var(s) => ATerm.Var(s, e.length + 1)
