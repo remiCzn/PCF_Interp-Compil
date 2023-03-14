@@ -103,3 +103,17 @@ val Extend: Code = Code.Seq(List(
 val SaveAcc: Code = Code.Ins("(global.set $ACC)")
 val RetrieveAcc: Code = Code.Ins("(global.get $ACC)")
 val PopEnv: Code = Code.Ins("(global.get $ENV)")
+
+
+def MkClos(idx : Int) : Code =
+  Code.Seq(
+    List(
+      Code.Ins(s"(i32.const $idx)"),
+      Code.Ins("(global.get $ENV)"),
+      Code.Ins("(call $pair)")
+    )
+  )
+
+val Apply: Code = Code.Ins("(call $apply)")
+
+

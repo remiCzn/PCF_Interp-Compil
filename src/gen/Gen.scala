@@ -1,7 +1,7 @@
 package gen
 
 import ast.ATerm
-import ast.ATerm.{BOp, IfZ, Lit, Let, Var}
+import ast.ATerm.{BOp, IfZ, Lit, Let, Var, Fun}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
 
 enum Code {
@@ -12,15 +12,43 @@ enum Code {
 
 object Gen {
   val empty: List[Code] = Nil
-
+  var idx = 0
+  var bodies : List[Code] = Nil
   def gen(t: ATerm): String = {
     println(t)
+    val a = emit(t)
     "(module\n" +
       s"${format(1, declare.all())}" +
+      s"${format(1, emitTable)}" +
+      s"${format(1, emitFunctions)}" +
       "  (func (export \"main\") (result i32)\n" +
-      s"${format(2, emit(t))}" +
+      s"${format(2, a)}" +
       "  return))\n"
   }
+
+  def emitTable: Code =
+    var table_ = "(table funcref\n" + "  (elem\n"
+    for (i <- 0 to idx-1) {
+      table_ += "    $closure" + i.toString + "\n"
+    }
+    table_ += "  )\n)"
+    Code.Ins(table_)
+
+  def emitFunction(i: Int, body: Code): Code =
+    Code.Seq(List(
+      Code.Ins("(func " + "$closure " +i.toString + " (result i32)"),
+      body,
+      Code.Ins("(return)"),
+      Code.Ins(")")
+      )
+    )
+
+  def emitFunctions: Code =
+    var codeList : List[Code] = List()
+    for (i <- 0 to idx-1) {
+      codeList :+ emitFunction(i, bodies(i))
+    }
+    Code.Seq(codeList)
 
   private def emit(t: ATerm): Code = {
     t match
@@ -51,7 +79,12 @@ object Gen {
       case Var(_, idx) => {
         Search(idx, Code.Ins("(global.get $ENV)"))
       }
-      case _ => ??? //TODO
+      case Fun(varia, t1) => {
+        val closure = MkClos(idx)
+        bodies :+ emit(t1)
+        idx +=1
+        closure
+      }
   }
 
   private def spaces(depth: Int): String = (for i <- 0 until depth yield "  ").mkString
