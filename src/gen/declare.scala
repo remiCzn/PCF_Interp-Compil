@@ -79,3 +79,15 @@ object declare {
     Code.Seq(List[Code](memory, table, Heap, Environnement, Accumulator, dList, Nil, pair, cons, head, tail, search, apply))
   }
 }
+
+def Search(idx: Int, list: Code): Code = {
+  Code.Seq(List(Code.Ins(s"(i32.const $idx)"), list, Code.Ins("(call $search)")))
+}
+
+def Cons(head: Int, tail: Code): Code = {
+  Code.Seq(List(
+    Code.Ins(s"(i32.const $head)"),
+    tail,
+    "(call $cons)"
+  ))
+}
