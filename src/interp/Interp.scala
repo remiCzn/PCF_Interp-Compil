@@ -9,7 +9,7 @@ import interp.Value.IntVal
 import scala.Some
 import scala.language.implicitConversions
 
-object Interp :
+object  Interp :
   type Env = Map[String, Value | IceCube]
 
   def interp(t: Term, e: Env): Value = {

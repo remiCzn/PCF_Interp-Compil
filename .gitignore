@@ -3,3 +3,6 @@ out/
 *.java
 *.interp
 *.tokens
+*.jar
+*.wasm
+*.wat
