@@ -19,7 +19,7 @@ enum ATerm:
 
 def annotate(term: Term, e: Env): ATerm =
   term match
-    case Term.Var(s) => ATerm.Var(s, e.length + 1)
+    case Term.Var(s) => ATerm.Var(s, e.lastIndexOf(s))
     case Term.Lit(n) => ATerm.Lit(n)
     case Term.BOp(op, t1, t2) => ATerm.BOp(op, annotate(t1,e), annotate(t2,e))
     case Term.IfZ(t1, t2, t3) => ATerm.IfZ(annotate(t1, e), annotate(t2, e), annotate(t3, e))
