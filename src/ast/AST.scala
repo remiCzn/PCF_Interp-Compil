@@ -30,7 +30,7 @@ enum Term extends AST :
 //      case Fix(x, t1) => s"Fix($x, $t1)"
 //  }
 
-enum Op :
+enum Op:
   case PLUS, MINUS, TIMES, DIVIDE
 
   override def toString: String = {
@@ -41,18 +41,18 @@ enum Op :
       case DIVIDE => "/"
   }
 
-object Op :
+object Op:
   def parse(s: String): Op = s match
-  case "+" => PLUS
-  case "-" => MINUS
-  case "*" => TIMES
-  case "/" => DIVIDE
-  case _ => ??? // should never happen
+    case "+" => PLUS
+    case "-" => MINUS
+    case "*" => TIMES
+    case "/" => DIVIDE
+    case _ => ??? // should never happen
 
 def transform(astExpr: AST): AST = {
   astExpr match
     case Term.LetPlus(varList, expr) =>
-      if (varList.length == 0) {
+      if (varList.isEmpty) {
         transform(expr)
       } else {
         Term.Let(varList.head._1, varList.head._2, transform(Term.LetPlus(varList.tail, expr)).asInstanceOf[Term])

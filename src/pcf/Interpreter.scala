@@ -8,12 +8,12 @@ import interp.Interp.interp
 import _root_.interp.Value
 import typer.*
 
-object Interp :
+object Interpreter :
   def main(args: Array[String]): Unit =
     val is = if (args.length == 0) System.in else new FileInputStream(args(0))
     val verbose = args.length == 0 || args.length > 0 && args(1) == "-v"
-    val (value, typ) = interpret(is, verbose);
-    println(s"==> ${value} : ${typ}")
+    val (value, typ) = interpret(is, verbose)
+    println(s"==> $value : $typ")
 
   def interpret(is: InputStream, verbose: Boolean): (Value, Type) =
     val input = new ANTLRInputStream(is)
