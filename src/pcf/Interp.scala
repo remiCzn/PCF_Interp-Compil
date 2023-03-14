@@ -9,7 +9,7 @@ import typer.Type
 
 import java.io.{FileInputStream, FileWriter, InputStream}
 
-object Main :
+object Interp:
   def main(args: Array[String]): Unit =
     val (is, filename) =
       if args.length == 0
@@ -29,7 +29,7 @@ object Main :
       parser.addErrorListener(new ErrorListener())
       val tree = parser.term()
       if (verbose) println(s"ANTLR Parse Tree: ${tree.toStringTree(parser)}")
-      if ! Error.flag then
+      if !Error.flag then
         val visitor = new ASTVisitor
         val term = visitor.visit(tree).asInstanceOf[Term]
         val transformedTerm = transform(term).asInstanceOf[Term]
