@@ -7,8 +7,7 @@ import ast.Term.{BOp, IfZ, Lit}
 enum Code {
   case Ins(ins: String)
   case Seq(seq: List[Code])
-  case IfThenElse(isZero: Code, ThenTerm: Code, ElseTerm: Code)
-  case Test(code1: Code, code2: Code)
+  case Test(isZero: Code, ThenTerm: Code, ElseTerm: Code)
 }
 
 object Gen {
@@ -16,7 +15,7 @@ object Gen {
 
   def gen(t: ATerm): String = {
     "(module\n" +
-      s"${format(1, declare.Environnement)}" +
+      s"${format(1, declare.all())}" +
       "  (func (export \"main\") (result i32)\n" +
       s"${format(2, emit(t))}" +
       "  return))\n"
@@ -37,7 +36,7 @@ object Gen {
           Code.Ins(instruction)
         ))
       case IfZ(isZero, thenTerm, elseTerm) =>
-        Code.IfThenElse(emit(isZero), emit(thenTerm), emit(elseTerm))
+        Code.Test(emit(isZero), emit(thenTerm), emit(elseTerm))
       case _ => ??? //TODO
   }
 
@@ -47,7 +46,7 @@ object Gen {
     case Code.Ins(s) => s"${spaces(d)}$s\n"
     case Code.Seq(l) =>
       (for (code <- l) yield format(d, code)).mkString
-    case Code.IfThenElse(isZero, thenTerm, elseTerm) =>
+    case Code.Test(isZero, thenTerm, elseTerm) =>
       format(d, isZero) +
         s"${spaces(d)}(if (result i32)\n" +
         s"${spaces(d + 1)}(then\n" +
