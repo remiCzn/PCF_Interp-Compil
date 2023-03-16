@@ -45,7 +45,6 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
     }
 
     val vars = getValues(ctx.assign)
-    println(vars)
 
     val expr = visit(ctx.term).asInstanceOf[Term]
     LetPlus(vars, expr).asInstanceOf[AST]

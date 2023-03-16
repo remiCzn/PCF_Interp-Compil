@@ -55,7 +55,7 @@ def transform(astExpr: AST): AST = {
       if (varList.isEmpty) {
         transform(expr)
       } else {
-        Term.Let(varList.head._1, varList.head._2, transform(Term.LetPlus(varList.tail, expr)).asInstanceOf[Term])
+        Term.Let(varList.head._1, transform(varList.head._2).asInstanceOf[Term], transform(Term.LetPlus(varList.tail, expr)).asInstanceOf[Term])
       }
     case other => other
 }

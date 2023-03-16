@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main (test.pcf)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="pcf.Interpreter" />
+    <module name="PCF_Interp-Compil" />
+    <option name="PROGRAM_PARAMETERS" value="src/test/test.pcf" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="pcf.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
