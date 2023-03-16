@@ -14,31 +14,40 @@ object Gen {
   val empty: List[Code] = Nil
   var idx = 0
   var bodies : List[Code] = Nil
+
   def gen(t: ATerm): String = {
-    println(t)
-    val a = emit(t)
+    val body = emit(t)
+    val table = emitTable
+    val functions = emitFunctions
+
     "(module\n" +
-      s"${format(1, declare.all())}" +
-      s"${format(1, emitTable)}" +
-      s"${format(1, emitFunctions)}" +
+      s"${format(0, declare.all())}" +
+      s"\n" +
+      s"${format(0, table)}" +
+      s"\n" +
+      s"${format(0, functions)}" +
+      s"\n" +
       "  (func (export \"main\") (result i32)\n" +
-      s"${format(2, a)}" +
+      s"${format(1, body)}" +
       "  return))\n"
   }
 
   def emitTable: Code =
-    var table_ = "(table funcref\n" + "  (elem\n"
+    var table_ = List[Code]();
+    table_ = table_ :+ Code.Ins("(table funcref")
+    table_ = table_ :+ Code.Ins("  (elem")
     for (i <- 0 to idx-1) {
-      table_ += "    $closure" + i.toString + "\n"
+      table_ = table_ :+ Code.Ins("    $closure" + i.toString)
     }
-    table_ += "  )\n)"
-    Code.Ins(table_)
+    table_ = table_ :+ Code.Ins("  )")
+    table_ = table_ :+ Code.Ins(")")
+    Code.Seq(table_)
 
   def emitFunction(i: Int, body: Code): Code =
     Code.Seq(List(
-      Code.Ins("(func " + "$closure " +i.toString + " (result i32)"),
-      body,
-      Code.Ins("(return)"),
+      Code.Ins("(func " + "$closure" +i.toString + " (result i32)"),
+      Code.Seq(List(body)),
+      Code.Ins("  (return)"),
       Code.Ins(")")
       )
     )
@@ -46,7 +55,7 @@ object Gen {
   def emitFunctions: Code =
     var codeList : List[Code] = List()
     for (i <- 0 to idx-1) {
-      codeList :+ emitFunction(i, bodies(i))
+      codeList = codeList :+ emitFunction(i, bodies(i))
     }
     Code.Seq(codeList)
 
@@ -81,7 +90,7 @@ object Gen {
       }
       case Fun(varia, t1) => {
         val closure = MkClos(idx)
-        bodies :+ emit(t1)
+        bodies = bodies :+ emit(t1)
         idx +=1
         closure
       }
@@ -92,7 +101,7 @@ object Gen {
   private def format(d: Int, code: Code): String = code match
     case Code.Ins(s) => s"${spaces(d)}$s\n"
     case Code.Seq(l) =>
-      (for (code <- l) yield format(d, code)).mkString
+      (for (code <- l) yield format(d+1, code)).mkString
     case Code.Test(isZero, thenTerm, elseTerm) =>
       format(d, isZero) +
         s"${spaces(d)}(if (result i32)\n" +

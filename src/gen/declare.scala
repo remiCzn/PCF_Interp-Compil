@@ -2,11 +2,6 @@ package gen
 
 object declare {
   val memory: Code = Code.Ins("(memory 1 10)")
-  val table: Code = Code.Ins("(table funcref\n" +
-    "    (elem\n" +
-    "        0\n" +
-    "    )\n" +
-    "  )")
   val Heap: Code = Code.Ins("(global $HEAP (mut i32) (i32.const 0))")
   val Environnement: Code = Code.Ins("(global $ENV  (mut i32) (i32.const 0))")
   val Accumulator: Code = Code.Ins("(global $ACC  (mut i32) (i32.const 999))")
@@ -76,7 +71,7 @@ object declare {
     "  )")
 
   val all: () => Code = () => {
-    Code.Seq(List[Code](memory, table, Heap, Environnement, Accumulator, dList, Nil, pair, cons, head, tail, search, apply))
+    Code.Seq(List[Code](memory, Heap, Environnement, Accumulator, dList, Nil, pair, cons, head, tail, search, apply))
   }
 }
 
