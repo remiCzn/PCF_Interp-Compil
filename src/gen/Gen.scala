@@ -1,7 +1,7 @@
 package gen
 
 import ast.ATerm
-import ast.ATerm.{BOp, IfZ, Lit, Let, Var, Fun}
+import ast.ATerm.{BOp, IfZ, Lit, Let, Var, Fun, App}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
 
 enum Code {
@@ -11,11 +11,11 @@ enum Code {
 }
 
 object Gen {
-  val empty: List[Code] = Nil
-  var idx = 0
-  var bodies : List[Code] = Nil
+  private var idx = 0
+  private var bodies : List[Code] = Nil
 
   def gen(t: ATerm): String = {
+    println(t)
     val body = emit(t)
     val table = emitTable
     val functions = emitFunctions
@@ -25,25 +25,26 @@ object Gen {
       s"\n" +
       s"${format(0, table)}" +
       s"\n" +
-      s"${format(0, functions)}" +
+      s"${format(-1, functions)}" +
       s"\n" +
       "  (func (export \"main\") (result i32)\n" +
       s"${format(1, body)}" +
       "  return))\n"
   }
 
-  def emitTable: Code =
-    var table_ = List[Code]();
+  private def emitTable: Code =
+    var table_ = List[Code]()
     table_ = table_ :+ Code.Ins("(table funcref")
     table_ = table_ :+ Code.Ins("  (elem")
-    for (i <- 0 to idx-1) {
+    for (i <- 0 until idx) {
       table_ = table_ :+ Code.Ins("    $closure" + i.toString)
     }
     table_ = table_ :+ Code.Ins("  )")
     table_ = table_ :+ Code.Ins(")")
     Code.Seq(table_)
 
-  def emitFunction(i: Int, body: Code): Code =
+  private def emitFunction(i: Int, body: Code): Code =
+    //TODO add arguments for the function
     Code.Seq(List(
       Code.Ins("(func " + "$closure" +i.toString + " (result i32)"),
       Code.Seq(List(body)),
@@ -52,51 +53,49 @@ object Gen {
       )
     )
 
-  def emitFunctions: Code =
+  private def emitFunctions: Code =
     var codeList : List[Code] = List()
-    for (i <- 0 to idx-1) {
-      codeList = codeList :+ emitFunction(i, bodies(i))
+    for (i <- 0 until idx) {
+      codeList = emitFunction(i, bodies(i)) :: codeList
     }
     Code.Seq(codeList)
 
-  private def emit(t: ATerm): Code = {
-    t match
-      case Lit(n) => Code.Ins(s"i32.const $n") //Si n est un Int
-      case BOp(op, t1, t2) =>
-        val instruction = op match
-          case PLUS => "i32.add"
-          case MINUS => "i32.sub"
-          case TIMES => "i32.mul"
-          case DIVIDE => "i32.div_u"
-        Code.Seq(List(
-          emit(t1),
-          emit(t2),
-          Code.Ins(instruction)
-        ))
-      case IfZ(isZero, thenTerm, elseTerm) =>
-        Code.Test(emit(isZero), emit(thenTerm), emit(elseTerm))
-      case Let(name, t, u) =>
-        Code.Seq(List(
-          PushEnv,
-          emit(t),
-          Extend,
-          emit(u),
-          SaveAcc,
-          PopEnv,
-          RetrieveAcc
-        ))
-      case Var(_, idx) => {
-        Search(idx, Code.Ins("(global.get $ENV)"))
-      }
-      case Fun(varia, t1) => {
-        val closure = MkClos(idx)
-        bodies = bodies :+ emit(t1)
-        idx +=1
-        closure
-      }
-  }
+  private def emit(t: ATerm): Code = t match
+    case Lit(n) => Code.Ins(s"(i32.const $n)") //Si n est un Int
+    case BOp(op, t1, t2) =>
+      val instruction = op match
+        case PLUS => "(i32.add)"
+        case MINUS => "(i32.sub)"
+        case TIMES => "(i32.mul)"
+        case DIVIDE => "(i32.div_u)"
+      Code.Seq(List(
+        emit(t1),
+        emit(t2),
+        Code.Ins(instruction)
+      ))
+    case IfZ(isZero, thenTerm, elseTerm) =>
+      Code.Test(emit(isZero), emit(thenTerm), emit(elseTerm))
+    case Let(_, t, u) =>
+      Code.Seq(List(
+        PushEnv,
+        emit(t),
+        Extend,
+        emit(u),
+        SaveAcc,
+        PopEnv,
+        RetrieveAcc
+      ))
+    case Var(_, idx) =>
+      Search(idx, Code.Ins("(global.get $ENV)"))
+    case Fun(_, t1) =>
+      val closure = MkClos(idx)
+      bodies = emit(t1) :: bodies
+      idx +=1
+      closure
+    case App(func: ATerm, arg: ATerm) =>
+      Apply(emit(func), emit(arg))
 
-  private def spaces(depth: Int): String = (for i <- 0 until depth yield "  ").mkString
+  private def spaces(depth: Int): String = (for _ <- 0 until depth yield "  ").mkString
 
   private def format(d: Int, code: Code): String = code match
     case Code.Ins(s) => s"${spaces(d)}$s\n"
@@ -112,5 +111,4 @@ object Gen {
         format(d + 2, thenTerm) +
         s"${spaces(d + 1)})\n" +
         s"${spaces(d)})\n"
-    case _ => ??? //TODO
 }

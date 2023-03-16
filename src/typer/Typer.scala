@@ -37,8 +37,8 @@ object Typer {
         val type2 = typer(t2, type_env)
         type1 match
           case a --> b => if(a === type2) b else throw new TypeException(s"Le terme $t2 est du type $type2 mais devrait être du type $type1")
-          case c: TVar => type2
-          case _ => ???
+          case _: TVar => type2
+          case d => throw new TypeException(s"Le term $t2 est du type $d mais ne devrait pas")
       }
       case Term.Fun(x, t1) => {
         val type_x = TVar()
