@@ -1,1 +1,0 @@
-(let id (fun x x) (let inc (fun x (+ x 1)) ((id inc) 76)))
