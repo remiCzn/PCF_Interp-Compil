@@ -45,6 +45,7 @@ object Gen {
 
   private def emitFunction(i: Int, body: Code): Code =
     //TODO add arguments for the function
+    println(s"In emitFunction $body, $i")
     Code.Seq(List(
       Code.Ins("(func " + "$closure" +i.toString + " (result i32)"),
       Code.Seq(List(body)),
@@ -89,8 +90,10 @@ object Gen {
       Search(idx, Code.Ins("(global.get $ENV)"))
     case Fun(_, t1) =>
       val closure = MkClos(idx)
-      bodies = emit(t1) :: bodies
       idx +=1
+      //bodies = emit(t1) :: bodies
+      bodies = (emit(t1) :: bodies.reverse).reverse
+      println(bodies)
       closure
     case App(func: ATerm, arg: ATerm) =>
       Apply(emit(func), emit(arg))
