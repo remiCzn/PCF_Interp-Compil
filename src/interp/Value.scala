@@ -11,7 +11,7 @@ enum Value {
   override def toString: String = {
     this match
       case IntVal(i) => s"$i"
-      case Closure(x, t, e) => s"$x -> $t"
+      case Closure(x, t, _) => s"$x -> $t"
   }
 }
 

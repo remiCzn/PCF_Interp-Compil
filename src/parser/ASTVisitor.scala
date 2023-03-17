@@ -13,8 +13,8 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
     Lit(BoxInt(ctx.getText.toInt)).asInstanceOf[AST]
 
   override def visitBOp(ctx: PCFParser.BOpContext): AST =
-    var op = if(ctx.OP1() != null) ctx.OP1() else ctx.OP2();
-    var opSymbole = Op.parse(op.getText)
+    val op = if (ctx.OP1() != null) ctx.OP1() else ctx.OP2()
+    val opSymbole = Op.parse(op.getText)
     val ANTLRTerms = ctx.term.asScala.toList
     val List(term1, term2) =
       for (ANTLRTerm <- ANTLRTerms) yield
@@ -39,15 +39,14 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
         getValues(value.assign(0)) ++ getValues(value.assign(1))
       } else {
         val varName = value.VAR.getText
-        val varValue = visit(value.term).asInstanceOf[Term];
+        val varValue = visit(value.term).asInstanceOf[Term]
         List((varName, varValue))
       }
     }
 
     val vars = getValues(ctx.assign)
-    println(vars)
 
-    val expr = visit(ctx.term).asInstanceOf[Term];
+    val expr = visit(ctx.term).asInstanceOf[Term]
     LetPlus(vars, expr).asInstanceOf[AST]
   }
 

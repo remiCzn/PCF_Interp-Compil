@@ -4,8 +4,7 @@ grammar PCF;
 
 term : LIT                                          # Lit
      | term term                                    # App
-     | '(' term OP1 term ')'                        # BOp
-     | '(' term OP2 term ')'                        # BOp
+     | '(' term ')'                                 # Par
      | term OP1 term                                # BOp
      | term OP2 term                                # BOp
      | 'ifz' term 'then' term 'else' term           # IfZ
@@ -13,7 +12,6 @@ term : LIT                                          # Lit
      | 'let' assign 'in' term                       # Let
      | 'fun' VAR '->' term                          # Fun
      | 'fix' VAR term                               # Fix
-     | '(' term ')'                                 # Par
      ;
 
 assign : VAR '=' term
