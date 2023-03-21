@@ -45,14 +45,14 @@ object Gen {
 
   private def emitFunction(i: Int, body: Code): Code =
     Code.Seq(List(
-      Code.Ins("(func " + "$closure" +i.toString + "(param $x i32) (result i32)"),
-      PushEnv,
-      Code.Ins("(local.get $x)"),
-      Extend,
+      Code.Ins("(func " + "$closure" +i.toString + " (result i32)"),
+      //PushEnv,
+      //Code.Ins("(local.get $x)"),
+      //Extend,
       Code.Seq(List(body)),
-      SaveAcc,
-      PopEnv,
-      RetrieveAcc,
+      //SaveAcc,
+      //PopEnv,
+      //RetrieveAcc,
       Code.Ins("  (return)"),
       Code.Ins(")")
       )
