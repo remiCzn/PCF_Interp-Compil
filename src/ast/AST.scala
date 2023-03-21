@@ -49,13 +49,19 @@ object Op:
     case "/" => DIVIDE
     case _ => ??? // should never happen
 
-def transform(astExpr: AST): AST = {
+def transform(astExpr: AST): Term = {
   astExpr match
     case Term.LetPlus(varList, expr) =>
       if (varList.isEmpty) {
         transform(expr)
       } else {
-        Term.Let(varList.head._1, transform(varList.head._2).asInstanceOf[Term], transform(Term.LetPlus(varList.tail, expr)).asInstanceOf[Term])
+        Term.Let(varList.head._1, transform(varList.head._2), transform(Term.LetPlus(varList.tail, expr)))
       }
-    case other => other
+    case Term.BOp(op, t1, t2) => Term.BOp(op, transform(t1), transform(t2))
+    case Term.IfZ(t1, t2, t3) => Term.IfZ(transform(t1), transform(t2), transform(t3))
+    case Term.App(f, a) => Term.App(transform(f), transform(a))
+    case Term.Fun(s, t) => Term.Fun(s, transform(t))
+    case Term.Fix(s, t) => Term.Fix(s, transform(t))
+    case Term.Let(s, t1, t2) => Term.Let(s, transform(t1), transform(t2))
+    case other => other.asInstanceOf[Term]
 }
