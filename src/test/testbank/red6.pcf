@@ -1,1 +1,0 @@
-(let minus (fun x (fun y (- x y))) (let g (minus 68) (g 2)))
