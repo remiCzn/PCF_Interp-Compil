@@ -111,9 +111,13 @@ def MkClos(idx : Int) : Code =
 
 def Apply(closure: Code, arg: Code): Code = {
   Code.Seq(List(
+    PushEnv,
     arg,
     closure,
     Code.Ins("(call $apply)"),
+    SaveAcc,
+    PopEnv,
+    RetrieveAcc
   ))
 }
 

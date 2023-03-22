@@ -60,6 +60,7 @@ object Gen {
 
   private def emitFunctions: Code =
     var codeList : List[Code] = List()
+    ///bodies = bodies.reverse
     for (i <- 0 until idx) {
       codeList = emitFunction(i, bodies(i)) :: codeList
     }
@@ -95,8 +96,8 @@ object Gen {
     case Fun(_, t1) =>
       val closure = MkClos(idx)
       idx +=1
-      //bodies = emit(t1) :: bodies
-      bodies = (emit(t1) :: bodies.reverse).reverse
+      bodies = emit(t1) :: bodies
+      //bodies = (emit(t1) :: bodies.reverse).reverse
       println(bodies)
       closure
     case App(func: ATerm, arg: ATerm) =>
