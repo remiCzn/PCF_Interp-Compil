@@ -41,6 +41,9 @@ object Typer {
       case Term.Fun(x, t1) =>
         val type_x = TVar()
         type_x --> typer(t1, type_env + (x -> type_x))
-      case Term.Fix(x, t1) => typer(t1, type_env + (x -> TVar()))
+      case Term.FixFun(f, x, t1) =>
+        val type_x = TVar()
+        val type_f = TVar()
+        type_x --> typer(t1, type_env + (x -> type_x) + (f -> type_f))
   }
 }

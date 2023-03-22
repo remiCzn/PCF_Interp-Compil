@@ -40,7 +40,7 @@ object  Interp :
         val v1: Value.Closure = interp(t1, e).asInstanceOf[Value.Closure]
         val env = e.concat(v1.e)
         interp(v1.t, env + (v1.x -> interp(t2, env)))
-      case Fix(x: String, t1: Term) =>
+      case FixFun(f: String, x: String, t1: Term) =>
         interp(t1, e + (x -> IceCube(t1, e)))
   }
 

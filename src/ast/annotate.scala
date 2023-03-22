@@ -14,7 +14,7 @@ enum ATerm:
   case Let(x: String, t1: ATerm, t2: ATerm)
   case Fun(variable: String, t1: ATerm)
   case App(t1: ATerm, t2: ATerm)
-  case Fix(variable: String, t1: ATerm)
+  case FixFun(f: String, x: String, t1: ATerm)
   case Var(s: String, index: Int)
 
 def annotate(term: Term, e: Env): ATerm =
@@ -26,4 +26,4 @@ def annotate(term: Term, e: Env): ATerm =
     case Term.Let(x, t1, t2) => ATerm.Let(x, annotate(t1, e), annotate(t2, x :: e))
     case Term.Fun(varia, t1) => ATerm.Fun(varia, annotate(t1, varia :: e))
     case Term.App(t1, t2) => ATerm.App( annotate(t1, e), annotate(t2, e))
-    case Term.Fix(varia, t1) => ATerm.Fix(varia, annotate(t1, e))
+    case Term.FixFun(f, x, t1) => ATerm.FixFun(f, x, annotate(t1, e))

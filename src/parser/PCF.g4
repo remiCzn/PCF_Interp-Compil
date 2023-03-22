@@ -11,7 +11,7 @@ term : LIT                                          # Lit
      | VAR                                          # Var
      | 'let' assign 'in' term                       # Let
      | 'fun' VAR '->' term                          # Fun
-     | 'fix' VAR term                               # Fix
+     | 'fixfun' VAR VAR '->' term                   # Fixfun
      ;
 
 assign : VAR '=' term

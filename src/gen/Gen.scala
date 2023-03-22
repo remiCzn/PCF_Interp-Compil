@@ -1,8 +1,9 @@
 package gen
 
 import ast.ATerm
-import ast.ATerm.{BOp, IfZ, Lit, Let, Var, Fun, App}
+import ast.ATerm.{App, BOp, Fun, IfZ, Let, Lit, Var}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
+import ast.Term.FixFun
 
 enum Code {
   case Ins(ins: String)
@@ -48,13 +49,7 @@ object Gen {
   private def emitFunction(i: Int, body: Code): Code =
     Code.Seq(List(
       Code.Ins("(func " + "$closure" +i.toString + " (result i32)"),
-      //PushEnv,
-      //Code.Ins("(local.get $x)"),
-      //Extend,
       Code.Seq(List(body)),
-      //SaveAcc,
-      //PopEnv,
-      //RetrieveAcc,
       Code.Ins("  (return)"),
       Code.Ins(")")
       )
@@ -62,7 +57,7 @@ object Gen {
 
   private def emitFunctions: Code =
     var codeList : List[Code] = List()
-    ///bodies = bodies.reverse
+    bodies = bodies.reverse
     for (i <- 0 until idx) {
       codeList = emitFunction(i, bodies(i)) :: codeList
     }
@@ -98,9 +93,10 @@ object Gen {
     case Var(_, idx) =>
       Search(idx, Code.Ins("(global.get $ENV)"))
     case Fun(_, t1) =>
+      val innerTerm = emit(t1)
       val closure = MkClos(idx)
       idx +=1
-      bodies = emit(t1) :: bodies
+      bodies = innerTerm :: bodies
       closure
     case App(func: ATerm, arg: ATerm) =>
       Apply(emit(func), emit(arg))

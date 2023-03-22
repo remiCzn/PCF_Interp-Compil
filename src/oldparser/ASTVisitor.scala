@@ -58,6 +58,6 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
   override def visitFix(ctx: oldparser.PCFParser.FixContext): AST = {
     val x = ctx.VAR.getText
     val term = visit(ctx.term).asInstanceOf[Term]
-    Fix(x, term).asInstanceOf[AST]
+    FixFun("f", x, term).asInstanceOf[AST]
   }
 

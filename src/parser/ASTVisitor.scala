@@ -1,7 +1,7 @@
 package parser
 import scala.jdk.CollectionConverters.*
 import ast.{AST, Op, Term}
-import Term.{App, BOp, Fix, Fun, IfZ, Let, LetPlus, Lit, Var}
+import Term.{App, BOp, FixFun, Fun, IfZ, Let, LetPlus, Lit, Var}
 import interp.{BoxInt, Interp}
 import parser.PCFParser
 import interp.Value.*
@@ -63,10 +63,11 @@ class ASTVisitor[AST] extends PCFBaseVisitor[AST] :
     Fun(x, term).asInstanceOf[AST]
   }
 
-  override def visitFix(ctx: PCFParser.FixContext): AST = {
-    val x = ctx.VAR.getText
+  override def visitFixfun(ctx: PCFParser.FixfunContext): AST = {
+    val List(f, n) = for (t <- ctx.VAR.asScala.toList) yield
+      t.toString
     val term = visit(ctx.term).asInstanceOf[Term]
-    Fix(x, term).asInstanceOf[AST]
+    FixFun(f, n, term).asInstanceOf[AST]
   }
 
   override def visitPar(ctx: PCFParser.ParContext): AST = {

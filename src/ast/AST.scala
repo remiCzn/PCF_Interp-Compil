@@ -16,7 +16,7 @@ enum Term extends AST :
   case LetPlus(vars: List[(String, Term)], body: Term)
   case App(t1: Term, t2: Term)
   case Fun(x: String, t1: Term)
-  case Fix(x: String, t1: Term)
+  case FixFun(f: String, x: String, t1: Term)
 
 //  override def toString: String = {
 //    this match
@@ -61,7 +61,7 @@ def transform(astExpr: AST): Term = {
     case Term.IfZ(t1, t2, t3) => Term.IfZ(transform(t1), transform(t2), transform(t3))
     case Term.App(f, a) => Term.App(transform(f), transform(a))
     case Term.Fun(s, t) => Term.Fun(s, transform(t))
-    case Term.Fix(s, t) => Term.Fix(s, transform(t))
+    case Term.FixFun(f, x, t) => Term.FixFun(f, x, transform(t))
     case Term.Let(s, t1, t2) => Term.Let(s, transform(t1), transform(t2))
     case other => other.asInstanceOf[Term]
 }
