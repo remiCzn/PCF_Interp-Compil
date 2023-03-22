@@ -15,6 +15,8 @@ object Gen {
   private var bodies : List[Code] = Nil
 
   def gen(t: ATerm): String = {
+    bodies = Nil
+    idx = 0
     println(t)
     val body = emit(t)
     val table = emitTable
@@ -97,8 +99,6 @@ object Gen {
       val closure = MkClos(idx)
       idx +=1
       bodies = emit(t1) :: bodies
-      //bodies = (emit(t1) :: bodies.reverse).reverse
-      println(bodies)
       closure
     case App(func: ATerm, arg: ATerm) =>
       Apply(emit(func), emit(arg))
