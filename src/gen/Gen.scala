@@ -82,7 +82,9 @@ object Gen {
         Code.Ins(instruction)
       ))
     case IfZ(isZero, thenTerm, elseTerm) =>
-      Code.Test(emit(isZero), emit(thenTerm), emit(elseTerm))
+      val elseIns = emit(elseTerm)
+      val thenIns = emit(thenTerm)
+      Code.Test(emit(isZero), thenIns, elseIns)
     case Let(_, t, u) =>
       Code.Seq(List(
         PushEnv,
