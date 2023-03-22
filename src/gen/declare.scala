@@ -58,12 +58,12 @@ object declare {
   private val apply: Code = Code.Ins("(func $apply (param $W i32)(param $C i32)(result i32)\n" +
     "      (local $e i32) ;; the environment e stored in the closure\n" +
     "      (local.get $W) ;; element 0 of the environment\n" +
-//    "      (local.get $C) ;; element 1 of the environment\n" +
+    "      (local.get $C) ;; element 1 of the environment\n" +
     "    ;; retrieve the environment in the closure (2nd element of a pair)\n" +
     "      (local.set $e (i32.load (i32.add (local.get $C)(i32.const 4))))\n" +
     "    ;; extend the environment e to <W, <C, e>>\n" +
     "      (local.get $e)\n" +
-//    "      (call $cons)\n" +
+    "      (call $cons)\n" +
     "      (call $cons)\n" +
     "      (global.set $ENV)\n" +
     "    ;; retrieve index of closure body and executes the body\n" +

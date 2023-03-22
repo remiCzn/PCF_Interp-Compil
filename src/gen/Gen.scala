@@ -3,7 +3,6 @@ package gen
 import ast.ATerm
 import ast.ATerm.{App, BOp, Fun, IfZ, Let, Lit, Var}
 import ast.Op.{DIVIDE, MINUS, PLUS, TIMES}
-import ast.Term.FixFun
 
 enum Code {
   case Ins(ins: String)

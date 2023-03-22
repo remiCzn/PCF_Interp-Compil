@@ -1,1 +1,2 @@
-fixfun f n -> ifz n then 1 else n * f (n - 1)
+let loop = fixfun f x -> f x in
+loop 0
